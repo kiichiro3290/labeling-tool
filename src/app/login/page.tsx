@@ -3,11 +3,25 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { login } from "@/lib/firebase/auth";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LogInPage() {
+  const router = useRouter();
   const [email, setEmail] = useState<string>("@test.com");
   const [password, setPassword] = useState<string>("");
+
+  const onClickLogInButton = () => {
+    login(email, password)
+      .catch((e) => {
+        console.error(e.code);
+      })
+      .finally(() => {
+        router.push("/");
+      });
+  };
+
   return (
     <div className="container mt-32 flex flex-col items-center space-y-8">
       <div className="grid gap-4 py-4">
@@ -33,7 +47,7 @@ export default function LogInPage() {
             className="col-span-3"
           />
         </div>
-        <Button>ログイン</Button>
+        <Button onClick={onClickLogInButton}>ログイン</Button>
       </div>
     </div>
   );

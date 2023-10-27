@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // 未作成の場合はユーザを新規作成する
           const appUser: User = {
             id: firebaseUser.uid,
-            name: firebaseUser.displayName!,
             createdAt: Date.now(),
           };
 
