@@ -3,6 +3,8 @@ import { Metadata } from "next";
 
 import { cn } from "@/lib/utils";
 import { fontSans } from "@/lib/font";
+import { AuthProvider } from "@/context/auth";
+import { SiteHeader } from "@/components/sitte-header";
 
 export const metadata: Metadata = {
   themeColor: [
@@ -31,9 +33,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
             fontSans.variable
           )}
         >
-          <div className="relative flex min-h-screen flex-col">
-            <div className="flex-1">{children}</div>
-          </div>
+          <AuthProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+            </div>
+          </AuthProvider>
         </body>
       </html>
     </>

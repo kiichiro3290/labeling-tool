@@ -2,9 +2,9 @@
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 
-import serviceAccount from '../../secret-key.json'
+import serviceAccount from '../../../secret-key.json'
 
-// firebase-admin SDK によって認証することで，セキュリティルールを無視して通信する
+// サーバサイドでは，firebase-admin SDK によって認証することで，セキュリティルールを無視して通信する
 const app = initializeApp({
     credential: cert({
         projectId: serviceAccount.project_id,
