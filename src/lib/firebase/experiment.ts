@@ -4,7 +4,7 @@ import { db } from "./client"
 export const createExperiments = async (exName: string, condition: string) => {
     const exData: Experiment = {
         name: exName,
-        conditions: [condition],
+        conditions: [],
         createdAt: new Date()
     }
     const ref = doc(collection(db, 'experiments'))
