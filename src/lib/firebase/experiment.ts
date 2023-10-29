@@ -1,7 +1,7 @@
 import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore"
 import { db } from "./client"
 
-export const createExperiments = async (userId: string, exName: string, condition: string) => {
+export const createExperiments = async (userId: string, exName: string) => {
     const exData: Experiment = {
         userId,
         name: exName,
@@ -14,7 +14,9 @@ export const createExperiments = async (userId: string, exName: string, conditio
 
 // ユーザが作成した実験名の一覧を取得
 export const getExperimentNames = async (userId: string) => {
-    const snapshot = await getDocs(collection(db, 'experiments'))
+    const ref = collection(db, 'experiments')
+    const q = query(ref, where('userId', '==', userId))
+    const snapshot = await getDocs(q)
     const names = snapshot.docs.map((item) => item.data().name)
     return names
 }
@@ -22,7 +24,7 @@ export const getExperimentNames = async (userId: string) => {
 // 実験名からユーザが作成したドキュメントのrefを検索する
 const findExperiment = async (exName: string, userId: string) => {
     const ref = collection(db, 'experiments')
-    const q = query(ref, where("name", "==", exName))
+    const q = query(ref, where("name", "==", exName), where("userId", '==', userId))
     const snapshot = await getDocs(q)
     const docRef = snapshot.docs[0]
 
@@ -35,7 +37,7 @@ export const findExperimentId = async (exName: string, userId: string) => {
     return ref.id
 }
 
-// 条件のラベルを追加する
+// 実験ドキュメントのconditionsに条件のラベルを追加する
 export const addCondition = async (exId: string, condition: string) => {
     const ref = doc(db, 'experiments', exId)
     const data = await getDoc(ref)

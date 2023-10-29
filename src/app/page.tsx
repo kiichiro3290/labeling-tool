@@ -66,7 +66,7 @@ export default function Home() {
     const f = async () => {
       if (!user?.id) return;
 
-      const data = await getLabels();
+      const data = await getLabels(user.id);
       const exNames = await getExperimentNames(user?.id);
       const labels = data.filter((item) => item.type === "condition");
       setLabels(labels);
@@ -74,19 +74,19 @@ export default function Home() {
     };
 
     f();
-  }, []);
+  }, [user?.id]);
 
   const onClickStartButton = async () => {
     if (!user?.id) return;
 
     const labelNames = labels.map((item) => item.name);
     if (!labelNames.includes(label)) {
-      createLabels(label, "condition");
+      createLabels(user.id, label, "condition");
     }
 
     // 実験が存在していない場合は作成
     if (!exNames.includes(exName)) {
-      createExperiments(user?.id, exName, label);
+      createExperiments(user?.id, exName);
     }
     const id = await findExperimentId(exName, user.id);
     await addCondition(id, label);
