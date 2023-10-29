@@ -4,4 +4,5 @@ type Label = {
     name: string
     type: LabelType
     createdAt: Date
+    userId: string
 }

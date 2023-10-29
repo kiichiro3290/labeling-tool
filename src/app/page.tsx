@@ -20,6 +20,7 @@ import {
   findExperimentId,
   getExperimentNames,
 } from "@/lib/firebase/experiment";
+import { useAuth } from "@/context/auth";
 
 enum Stepper {
   Input,
@@ -47,11 +48,12 @@ function InputWithLabel({ value, onChange, placeholder }: Props) {
 }
 
 export default function Home() {
+  const user = useAuth();
+
   const [openExSelector, setOpenExSelector] = useState<boolean>(false);
   const [openLabelSelector, setOpenLabelSelector] = useState<boolean>(false);
   const [exSelectorValue, setExSelectorValue] = useState<string>("");
   const [labelSelectorValue, setLabelSelectorValue] = useState<string>("");
-
   const [label, setLabel] = useState<string>("");
   const [labels, setLabels] = useState<Label[]>([]);
   const [exId, setExId] = useState<string>("");
@@ -62,8 +64,10 @@ export default function Home() {
 
   useEffect(() => {
     const f = async () => {
+      if (!user?.id) return;
+
       const data = await getLabels();
-      const exNames = await getExperimentNames();
+      const exNames = await getExperimentNames(user?.id);
       const labels = data.filter((item) => item.type === "condition");
       setLabels(labels);
       setExNames(exNames);
@@ -73,6 +77,8 @@ export default function Home() {
   }, []);
 
   const onClickStartButton = async () => {
+    if (!user?.id) return;
+
     const labelNames = labels.map((item) => item.name);
     if (!labelNames.includes(label)) {
       createLabels(label, "condition");
@@ -80,9 +86,9 @@ export default function Home() {
 
     // 実験が存在していない場合は作成
     if (!exNames.includes(exName)) {
-      createExperiments(exName, label);
+      createExperiments(user?.id, exName, label);
     }
-    const id = await findExperimentId(exName);
+    const id = await findExperimentId(exName, user.id);
     await addCondition(id, label);
 
     setExId(id);
@@ -90,13 +96,15 @@ export default function Home() {
   };
 
   const onClickStampButton = async () => {
+    if (!user?.id) return;
+
     setStamps((prev) => {
       const curr = [...prev];
       curr.unshift(new Date());
       return curr;
     });
 
-    await addStamp(exId, label);
+    await addStamp(exId, user.id, label);
   };
 
   const onClickEndButton = () => {
@@ -180,7 +188,9 @@ export default function Home() {
                         value={item.name}
                         onSelect={(currentValue) => {
                           setLabelSelectorValue(
-                            currentValue === exSelectorValue ? "" : currentValue
+                            currentValue === labelSelectorValue
+                              ? ""
+                              : currentValue
                           );
                           setLabel(
                             currentValue === label ? label : currentValue

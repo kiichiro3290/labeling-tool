@@ -18,6 +18,7 @@
 ```
 - [docId]
     |- name: string
+    |- userId: uid // usersドキュメントのdocId
     |- type: 'condition'
     |- createdAt: timestamp
 ```
@@ -27,11 +28,13 @@
 ```
 - [docId]
     |- name: string
+    |- userId: uid // usersドキュメントのdocId
     |- conditions: string[]
     |- createdAt: timestamp
     |- stamps サブコレクション
         |- condition: string
         |- experimentId: docId // experimentsドキュメントのdocId
         |- createdAt: string
+        |- userId: uid // usersドキュメントのdocId
 
 ```

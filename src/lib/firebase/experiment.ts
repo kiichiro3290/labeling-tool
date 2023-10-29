@@ -1,8 +1,9 @@
 import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore"
 import { db } from "./client"
 
-export const createExperiments = async (exName: string, condition: string) => {
+export const createExperiments = async (userId: string, exName: string, condition: string) => {
     const exData: Experiment = {
+        userId,
         name: exName,
         conditions: [],
         createdAt: new Date()
@@ -11,15 +12,15 @@ export const createExperiments = async (exName: string, condition: string) => {
     await setDoc(ref, exData)
 }
 
-// 実験名の一覧を取得
-export const getExperimentNames = async () => {
+// ユーザが作成した実験名の一覧を取得
+export const getExperimentNames = async (userId: string) => {
     const snapshot = await getDocs(collection(db, 'experiments'))
     const names = snapshot.docs.map((item) => item.data().name)
     return names
 }
 
-// 実験名からドキュメントのrefを検索する
-const findExperiment = async (exName: string) => {
+// 実験名からユーザが作成したドキュメントのrefを検索する
+const findExperiment = async (exName: string, userId: string) => {
     const ref = collection(db, 'experiments')
     const q = query(ref, where("name", "==", exName))
     const snapshot = await getDocs(q)
@@ -29,8 +30,8 @@ const findExperiment = async (exName: string) => {
 }
 
 // 実験のIDを検索する
-export const findExperimentId = async (exName: string) => {
-    const ref = await findExperiment(exName)
+export const findExperimentId = async (exName: string, userId: string) => {
+    const ref = await findExperiment(exName, userId)
     return ref.id
 }
 
@@ -46,9 +47,10 @@ export const addCondition = async (exId: string, condition: string) => {
 }
 
 // タイムスタンプを追加
-export const addStamp = async (exId: string, condition: string) => {
+export const addStamp = async (exId: string, userId: string, condition: string) => {
  const ref = doc(collection(db, 'experiments', exId, 'stamps'))
  const data: Stamp = {
+    userId,
     timestamp: new Date(),
     experimentId: exId,
     condition
