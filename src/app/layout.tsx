@@ -7,10 +7,6 @@ import { AuthProvider } from "@/context/auth";
 import { SiteHeader } from "@/components/sitte-header";
 
 export const metadata: Metadata = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-16x16.png",
