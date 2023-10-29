@@ -35,5 +35,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# firebase
+firebase.json
+firestore.indexes.json
+firestore.rules
+remoteconfig.template.json
+.firebaserc
+public/index.html
+public/404.html
+
 .env
 secret-key.json
