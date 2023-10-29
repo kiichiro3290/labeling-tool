@@ -33,7 +33,7 @@ type Props = {
   placeholder: string;
 };
 
-export function InputWithLabel({ value, onChange, placeholder }: Props) {
+function InputWithLabel({ value, onChange, placeholder }: Props) {
   return (
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Input
