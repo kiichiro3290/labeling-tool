@@ -50,17 +50,29 @@ function InputWithLabel({ value, onChange, placeholder }: Props) {
 export default function Home() {
   const user = useAuth();
 
-  const [openExSelector, setOpenExSelector] = useState<boolean>(false);
-  const [openLabelSelector, setOpenLabelSelector] = useState<boolean>(false);
-  const [exSelectorValue, setExSelectorValue] = useState<string>("");
-  const [labelSelectorValue, setLabelSelectorValue] = useState<string>("");
-  const [label, setLabel] = useState<string>("");
-  const [labels, setLabels] = useState<Label[]>([]);
+  // 実験名の登録
   const [exId, setExId] = useState<string>("");
   const [exName, setExName] = useState<string>("");
   const [exNames, setExNames] = useState<string[]>([]);
+  const [openExSelector, setOpenExSelector] = useState<boolean>(false);
+  const [exSelectorValue, setExSelectorValue] = useState<string>("");
+
+  // データラベルの登録
+  const [labelSelectorValue, setLabelSelectorValue] = useState<string>("");
+  const [openLabelSelector, setOpenLabelSelector] = useState<boolean>(false);
+  const [label, setLabel] = useState<string>("");
+  const [labels, setLabels] = useState<Label[]>([]);
+
+  // 状態の登録
+  const [state, setState] = useState<string>("");
+  const [stateList, setStateList] = useState<string[]>([]);
+
+  // ステッパー
   const [stepper, setStepper] = useState<Stepper>(Stepper.Input);
-  const [stamps, setStamps] = useState<Date[]>([]);
+
+  // タイムスタンプ
+  type StampState = { time: Date; state: string };
+  const [stamps, setStamps] = useState<StampState[]>([]);
 
   useEffect(() => {
     const f = async () => {
@@ -95,16 +107,20 @@ export default function Home() {
     setStepper(Stepper.Start);
   };
 
-  const onClickStampButton = async () => {
+  const onClickStampButton = async (state: string) => {
     if (!user?.id) return;
 
     setStamps((prev) => {
       const curr = [...prev];
-      curr.unshift(new Date());
+      const data = {
+        time: new Date(),
+        state,
+      };
+      curr.unshift(data);
       return curr;
     });
 
-    await addStamp(exId, user.id, label);
+    await addStamp(exId, user.id, label, state);
   };
 
   const onClickEndButton = () => {
@@ -207,12 +223,59 @@ export default function Home() {
             </Popover>
           </div>
 
-          <Button
-            onClick={onClickStartButton}
-            disabled={exName === "" || label === ""}
-          >
-            実験開始
-          </Button>
+          <div className="flex w-full max-w-sm items-center align-middle space-x-2">
+            <InputWithLabel
+              placeholder="状態"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+            />
+            <Button
+              disabled={state === ""}
+              onClick={() => {
+                setStateList((prev) => {
+                  const curr = [...prev];
+                  curr.push(state);
+                  return curr;
+                });
+                setState("");
+              }}
+            >
+              追加
+            </Button>
+          </div>
+
+          <h1 className="my-0 py-0">状態一覧</h1>
+          <div className="flex w-full max-w-sm">
+            {stateList.length === 0 ? (
+              "状態を追加してください"
+            ) : (
+              <ol type="1">
+                {stateList.map((item, id) => (
+                  <li key={id}>・{item}</li>
+                ))}
+              </ol>
+            )}
+          </div>
+
+          <div className="flex space-x-8">
+            <Button
+              onClick={() => {
+                setExName("");
+                setLabel("");
+                setState("");
+                setStateList([]);
+              }}
+              className="bg-blue-500"
+            >
+              リセット
+            </Button>
+            <Button
+              onClick={onClickStartButton}
+              disabled={exName === "" || label === "" || stateList.length === 0}
+            >
+              実験開始
+            </Button>
+          </div>
         </>
       )}
 
@@ -221,12 +284,20 @@ export default function Home() {
           <Label>
             {exName} : {label}
           </Label>
-          <Button onClick={onClickStampButton}>スタンプ</Button>
-          <Button onClick={onClickEndButton}>終了</Button>
+          {stateList.map((item, id) => (
+            <Button key={id} onClick={() => onClickStampButton(item)}>
+              {id + 1}：{item}
+            </Button>
+          ))}
+          <Button onClick={onClickEndButton} className="bg-red-500">
+            終了
+          </Button>
           <Label>タイムスタンプ</Label>
           <ul>
-            {stamps.map((item: Date, id) => (
-              <li key={id}>{item.toLocaleString()}</li>
+            {stamps.map((item: StampState, id) => (
+              <li key={id}>
+                {item.state}：{item.time.toLocaleString()}
+              </li>
             ))}
           </ul>
           <Label>end</Label>

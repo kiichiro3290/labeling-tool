@@ -10,4 +10,5 @@ type Stamp = {
     timestamp: Date
     experimentId: string
     condition: string
+    state: string
 }
