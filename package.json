@@ -27,10 +27,13 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
+    "babel-loader": "^9.2.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.0",
     "firebase-admin": "^11.11.0",
