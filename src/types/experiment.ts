@@ -7,6 +7,7 @@ type Experiment = {
 
 type Stamp = {
     userId: string
+    unixTime: number
     timestamp: Date
     experimentId: string
     condition: string

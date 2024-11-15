@@ -116,6 +116,7 @@ export default function Home() {
         time: new Date(),
         state,
       };
+
       curr.unshift(data);
       return curr;
     });

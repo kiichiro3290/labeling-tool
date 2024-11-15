@@ -51,9 +51,11 @@ export const addCondition = async (exId: string, condition: string) => {
 // タイムスタンプを追加
 export const addStamp = async (exId: string, userId: string, condition: string, state: string) => {
  const ref = doc(collection(db, 'experiments', exId, 'stamps'))
+ const d = new Date()
  const data: Stamp = {
     userId,
-    timestamp: new Date(),
+    unixTime: d.getTime(),
+    timestamp: d,
     experimentId: exId,
     condition,
     state
