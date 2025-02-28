@@ -20,4 +20,5 @@ type Stamp struct {
 	TimeStr      string    `json:"TimeStr"`
 	UserId       string    `json:"userId"`
 	State        string    `json:"state"`
+	UnixTime     int64     `json:"unixTime"`
 }
